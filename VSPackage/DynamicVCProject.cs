@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using EnvDTE;
+using Microsoft.VisualStudio.VCProjectEngine;
 using System.Collections.Generic;
 
 namespace OpenCppCoverage.VSPackage
@@ -48,6 +50,22 @@ namespace OpenCppCoverage.VSPackage
                 foreach (var file in project_.Files)
                     files.Add(new DynamicVCFile(file));
                 return files;
+            }
+        }
+
+        public IEnumerable<string> CompileFiles
+        {
+            get
+            {
+                foreach (VCFile file in project_.Files)
+                {
+                    
+                    if (file.ItemType == "ClCompile" || file.ItemType == "ClInclude")
+                    {
+                        yield return file.FullPath;
+                    }
+                }
+                    
             }
         }
 

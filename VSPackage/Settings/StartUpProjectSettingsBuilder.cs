@@ -221,7 +221,7 @@ namespace OpenCppCoverage.VSPackage.Settings
                     var cppProject = new StartUpProjectSettings.CppProject()
                     {
                         ModulePath = configuration.PrimaryOutput,
-                        SourcePaths = PathHelper.ComputeCommonFolders(project.Files.Select(f => f.FullPath)),
+                        SourcePaths = PathHelper.ComputeCommonFolders(project.CompileFiles),
                         Path = project.UniqueName
                     };
                     cppProjects.Add(cppProject);

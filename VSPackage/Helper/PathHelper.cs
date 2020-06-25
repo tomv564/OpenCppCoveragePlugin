@@ -16,6 +16,7 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace OpenCppCoverage.VSPackage.Helper
 {
@@ -24,10 +25,12 @@ namespace OpenCppCoverage.VSPackage.Helper
         //---------------------------------------------------------------------       
         public static IEnumerable<string> ComputeCommonFolders(IEnumerable<string> filePaths)
         {
-            var commonFolders = new List<string>();
+            var uniqueFolders = new HashSet<string>();
 
             foreach (var path in filePaths)
-                commonFolders.Add(Path.GetDirectoryName(path));
+                uniqueFolders.Add(Path.GetDirectoryName(path));
+
+            var commonFolders = new List<string>(uniqueFolders);
             commonFolders.Sort();
             int index = 0;
             string previousFolder = null;

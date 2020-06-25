@@ -64,6 +64,15 @@ namespace OpenCppCoverage.VSPackage
             }
         }
 
+        //---------------------------------------------------------------------
+        public IEnumerable<string> CompileFiles
+        {
+            get
+            {
+                return vcProject_.CompileFiles;
+            }
+        }
+
         public readonly Project project_;
         readonly DynamicVCProject vcProject_;
     }
