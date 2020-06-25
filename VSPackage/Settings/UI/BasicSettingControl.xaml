@@ -67,7 +67,17 @@
                     Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
 
                 <Label Content="Selected projects:" Grid.Row="2" Grid.Column="0"/>
-                <DataGrid
+                <ListView ItemsSource="{Binding SelectableProjects}" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0 0 0 6">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox IsChecked="{Binding IsSelected}" Margin="0,0,5,0"/>
+                                <TextBlock Text="{Binding Name}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>                    
+                </ListView>
+                <!--<DataGrid
                     ItemsSource="{Binding SelectableProjects}" 
                     Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                     CanUserAddRows="False"
@@ -85,7 +95,7 @@
                         </DataGridTextColumn>
                         <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsSelected}"/>
                     </DataGrid.Columns>
-                </DataGrid>
+                </DataGrid>-->
 
                 <Button 
                     Content="Toggle projects selection"
