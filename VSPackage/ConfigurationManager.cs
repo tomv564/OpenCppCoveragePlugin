@@ -16,6 +16,7 @@
 
 using EnvDTE;
 using EnvDTE80;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -30,11 +31,11 @@ namespace OpenCppCoverage.VSPackage
 
         //---------------------------------------------------------------------
         public DynamicVCConfiguration GetConfiguration(
-            SolutionConfiguration2 activeConfiguration,
+            IEnumerable<SolutionContext> contexts,
             ExtendedProject project)
         {
             string error;
-            var configuration = ComputeConfiguration(activeConfiguration, project, out error);
+            var configuration = ComputeConfiguration(contexts, project, out error);
             
             if (configuration == null)
                 throw new VSPackageException(error);
@@ -44,11 +45,11 @@ namespace OpenCppCoverage.VSPackage
 
         //---------------------------------------------------------------------
         public DynamicVCConfiguration FindConfiguration(
-            SolutionConfiguration2 activeConfiguration,
+            IEnumerable<SolutionContext> contexts,
             ExtendedProject project)
         {
             string error;
-            var configuration = ComputeConfiguration(activeConfiguration, project, out error);
+            var configuration = ComputeConfiguration(contexts, project, out error);
             return configuration;
         }
 
@@ -61,12 +62,12 @@ namespace OpenCppCoverage.VSPackage
 
         //---------------------------------------------------------------------
         DynamicVCConfiguration ComputeConfiguration(
-            SolutionConfiguration2 activeConfiguration,
+            IEnumerable<SolutionContext> contexts,
             ExtendedProject project, 
             out string error)
         {
             error = null;
-            var context = ComputeContext(activeConfiguration, project, ref error);
+            var context = ComputeContext(contexts, project, ref error);
 
             if (context == null)
                 return null;
@@ -86,32 +87,30 @@ namespace OpenCppCoverage.VSPackage
             SolutionContext context, 
             ref string error)
         {
-            var configurations = project.Configurations;
-            var configuration = configurations.FirstOrDefault(
-                c => c.ConfigurationName == context.ConfigurationName && c.PlatformName == context.PlatformName);
+            dynamic vcProject = project.project_.Object;
+            dynamic vcConfig = vcProject.ActiveConfiguration;
 
-            if (configuration == null)
+            if (vcConfig == null)
             {
                 var builder = new StringBuilder();
 
                 builder.AppendLine(string.Format("Cannot find a configuration for the project {0}", project.UniqueName));
                 builder.AppendLine(string.Format(" - Solution: configuration: {0} platform: {1}", context.ConfigurationName, context.PlatformName));
-                foreach (var config in configurations)
+                foreach (var config in project.Configurations)
                     builder.AppendLine(string.Format(" - Project: configuration: {0} platform: {1}", config.ConfigurationName, config.PlatformName));
                 error = builder.ToString();
                 return null;
             }
 
-            return configuration;
+            return new DynamicVCConfiguration(vcConfig);
         }
 
         //---------------------------------------------------------------------
         SolutionContext ComputeContext(
-            SolutionConfiguration2 activeConfiguration, 
+            IEnumerable<SolutionContext> contexts,
             ExtendedProject project, 
             ref string error)
         {
-            var contexts = activeConfiguration.SolutionContexts.Cast<SolutionContext>();
             var context = contexts.FirstOrDefault(c => c.ProjectName == project.UniqueName);
 
             if (context == null)

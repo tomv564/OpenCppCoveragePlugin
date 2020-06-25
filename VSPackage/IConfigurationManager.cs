@@ -14,17 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+using EnvDTE;
 using EnvDTE80;
+using System.Collections.Generic;
 
 namespace OpenCppCoverage.VSPackage
 {
     interface IConfigurationManager
     {
         DynamicVCConfiguration GetConfiguration(
-            SolutionConfiguration2 activeConfiguration, 
+                        IEnumerable<SolutionContext> contexts,
+ 
             ExtendedProject project);
         DynamicVCConfiguration FindConfiguration(
-            SolutionConfiguration2 activeConfiguration,
+                        IEnumerable<SolutionContext> contexts,
+
             ExtendedProject project);
         string GetSolutionConfigurationName(SolutionConfiguration2 activeConfiguration);
     }

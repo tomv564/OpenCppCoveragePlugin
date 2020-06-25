@@ -86,9 +86,10 @@ namespace OpenCppCoverage.VSPackage.Settings
             SolutionConfiguration2 activeConfiguration,
             List<ExtendedProject> projects,
             ExtendedProject project)
-        { 
+        {
+            var solutionContexts = activeConfiguration.SolutionContexts.Cast<SolutionContext>().ToList();
             var startupConfiguration = this.configurationManager.GetConfiguration(
-                activeConfiguration, project);
+                solutionContexts, project);
             var debugSettings = startupConfiguration.DebugSettings;
 
             var settings = new StartUpProjectSettings();
@@ -99,8 +100,7 @@ namespace OpenCppCoverage.VSPackage.Settings
                 this.configurationManager.GetSolutionConfigurationName(activeConfiguration);
             settings.ProjectName = project.UniqueName;
             settings.ProjectPath = project.Path;
-            settings.CppProjects = BuildCppProject(
-                activeConfiguration, this.configurationManager, projects);
+            settings.CppProjects = BuildCppProject(this.configurationManager, projects);
 
             var vcclCompilerTool = startupConfiguration.OptionalVCCLCompilerTool;
             if (vcclCompilerTool == null)
@@ -206,7 +206,6 @@ namespace OpenCppCoverage.VSPackage.Settings
 
         //---------------------------------------------------------------------
         static IEnumerable<StartUpProjectSettings.CppProject> BuildCppProject(
-            SolutionConfiguration2 activeConfiguration,
             IConfigurationManager configurationManager,
             List<ExtendedProject> projects)
         {
@@ -214,7 +213,8 @@ namespace OpenCppCoverage.VSPackage.Settings
 
             foreach (var project in projects)
             {
-                var configuration = configurationManager.FindConfiguration(activeConfiguration, project);
+                dynamic vcProject = project.project_.Object;
+                dynamic configuration = vcProject.ActiveConfiguration;
 
                 if (configuration != null)
                 {

@@ -64,7 +64,7 @@ namespace OpenCppCoverage.VSPackage
             }
         }
 
-        readonly Project project_;
+        public readonly Project project_;
         readonly DynamicVCProject vcProject_;
     }
 }
